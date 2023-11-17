@@ -1,0 +1,23 @@
+{
+  "name": "garphserverlibrary",
+  "version": "1.0.0",
+  "description": "server GraphQL",
+  "main": "index.js",
+  "scripts": {
+    "test": "test",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "keywords": [
+    "lomalo82"
+  ],
+  "author": "Misha",
+  "license": "ISC",
+  "dependencies": {
+    "@apollo/server": "^4.9.3",
+    "graphql": "^16.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
