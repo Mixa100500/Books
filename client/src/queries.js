@@ -6,8 +6,6 @@ export const ALL_BOOKS = gql`
       published
       author
       title
-      genres
-      id
     }
   }
 `
