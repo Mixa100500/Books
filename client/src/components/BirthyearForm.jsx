@@ -1,4 +1,4 @@
-import { useMutation } from "@apollo/client"
+import { useMutation, useQuery } from "@apollo/client"
 import { useState } from "react"
 import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries"
 
@@ -11,6 +11,17 @@ const BirthForm = () => {
       query: ALL_AUTHORS
     }]}
   )
+  const result = useQuery(ALL_AUTHORS)
+
+  if(result.loading) {
+    return <div>loading...</div>
+  }
+
+  if(result.error) {
+    return <div>error</div>
+  }
+
+  const authors = result.data.allAuthors
 
   const submit = (e) => {
     e.preventDefault()
@@ -28,13 +39,19 @@ const BirthForm = () => {
       <h2>Set birthyear</h2>
       <form onSubmit={submit}>
         <div>
-          <label>
-            name
-            <input
-              value={name}
-              onChange={({ target }) => {setName(target.value)}}
-            />
-          </label>
+          <select
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          >
+            {authors.map(a => 
+              <option
+                value={a.name}
+                key={a.name}
+              >
+                {a.name}
+              </option>
+            )}
+          </select>
         </div>
         <div>
           <label>
