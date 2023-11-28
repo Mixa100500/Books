@@ -1,9 +1,9 @@
 import { useQuery } from "@apollo/client"
 import { ALL_AUTHORS } from "../queries"
-import BirthForm from "./BirthyearForm";
+import BirthForm from "./BirthyearForm"
 
 const Authors = () => {
-  const result = useQuery(ALL_AUTHORS);
+  const result = useQuery(ALL_AUTHORS)
 
   if(result.loading) {
     return <div>loading...</div>

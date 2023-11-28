@@ -5,13 +5,45 @@ import { ALL_AUTHORS, EDIT_AUTHOR } from "../queries"
 const BirthForm = () => {
   const [name, setName] = useState('')
   const [born, setBorn] = useState(0)
-
-  const [editAuthor] = useMutation(EDIT_AUTHOR, {
-    refetchQueries: [{
-      query: ALL_AUTHORS
-    }]}
-  )
   const result = useQuery(ALL_AUTHORS)
+  
+  const [editAuthor] = useMutation(EDIT_AUTHOR, {
+    update: (cache, { data }) => {
+      cache.modify({
+        fields: {
+          allAuthors(existingAuthors = []) {
+            const newAuthors = existingAuthors.map(author => {
+              if (author.name === data.editAuthor.name) {
+                return {
+                  ...author,
+                  born: data.editAuthor.born
+                }
+              } else {
+                return author
+              }
+            })
+            return newAuthors
+          },
+          allBooks(existingBooks = []) {
+            return existingBooks.map(book => {
+              if (book.author.name === data.editAuthor.name) {
+                return {
+                  ...book,
+                  author: {
+                    ...book.author,
+                    born: data.editAuthor.born
+                  }
+                }
+              } else {
+                return book
+              }
+            })
+          }
+        }
+      })
+    }
+  })
+  
 
   if(result.loading) {
     return <div>loading...</div>
@@ -22,7 +54,6 @@ const BirthForm = () => {
   }
 
   const authors = result.data.allAuthors
-
   const submit = (e) => {
     e.preventDefault()
 

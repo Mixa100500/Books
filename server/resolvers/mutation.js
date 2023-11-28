@@ -103,9 +103,9 @@ const mutation = {
   },
 
   login: async (root, { username, password }) => {
-    const user = await User.findOne({ username: username })
+    const user = await User.findOne({ username })
 
-    if(!user && password !== 'secret') {
+    if(!user || password !== 'secret') {
       throw new GraphQLError('wrong credentials', {
         extensions: {
           code: 'BAD_USER_INPUT'
