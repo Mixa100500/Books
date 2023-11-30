@@ -4,6 +4,7 @@ export const ALL_BOOKS = gql`
   query {
     allBooks {
       published
+      genres
       author {
         name
       }
@@ -70,6 +71,15 @@ export const LOGIN = gql`
       password: $password,
     ) {
       value
+    }
+  }
+`
+
+export const ME = gql`
+  query  {
+    me {
+      username
+      favoriteGenre
     }
   }
 `
