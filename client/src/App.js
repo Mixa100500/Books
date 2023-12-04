@@ -36,8 +36,8 @@ const App = () => {
           <Link to={'/'} >books</Link>{' '}
           <Link to={'/authors'} >authors</Link>{' '}
           {token ? <>
-            <Link to={'/new/book'} >add book</Link>
-            <Link to={'/recommend'} >recommend</Link>
+            <Link to={'/new/book'} >add book</Link>{' '}
+            <Link to={'/recommend'} >recommend</Link>{' '}
             <button onClick={logout}>logout</button>
           </> :
           <Link to={'/login'} >login</Link>
@@ -47,7 +47,7 @@ const App = () => {
         <Routes >
           <Route path='/' element={<Books />} />
           <Route path='/authors' element={<Authors />} />
-          <Route path='/new/book' element={<NewBook />} />
+          <Route path='/new/book' element={<NewBook setError={notify}/>} />
           <Route path='/login' element={
             <LoginForm setError={notify} setToken={setToken}/>
           } />

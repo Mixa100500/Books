@@ -17,45 +17,30 @@ const checkAuthorization = (currentUser) => {
 const mutation = {
   addBook: async (root, args, { currentUser }) => {
     checkAuthorization(currentUser)
-    
-    let author = await Author.findOne({ name: args.author })
-
-    if(!author) {
-      const authorBeforeSave = new Author({
-        name: args.author,
-        bookCount: 1,
+    let author
+    try {
+      console.log(args)
+      author = await Author.findOneAndUpdate(
+        { name: args.author },
+        { $inc: { bookCount: 1 } },
+        { new: true, upsert: true }
+      )
+      
+    } catch (error) {
+      console.log(error)
+      throw new GraphQLError('Create the author failed', {
+        extensions: {
+          code: 'BAD_USER_INPUT',
+          error,
+        }
       })
-      
-      try {
-        author = await authorBeforeSave.save()
-      } catch (error) {
-        throw new GraphQLError('Create the author failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            error,
-          }
-        })
-      }
-      
-    } else {
-
-      try {
-        author.bookCount++;
-        await author.save()
-      } catch (error) {
-        throw new GraphQLError('Change the auther failed', {
-          extensions: {
-            code: 'BAD_USER_INPUT',
-            error,
-          }
-        })
-      }
     }
     const bookBeforeSave = { ...args, author: author._id }
     let savedBook
 
     try {
       const bookRequest = new Book(bookBeforeSave)
+      console.log(bookRequest)
       savedBook = await bookRequest.save()
     } catch (error) {
       throw new GraphQLError('Create the book failed', {

@@ -1,18 +1,21 @@
 import { useQuery } from "@apollo/client"
 import { ALL_BOOKS } from "../../queries"
-import { useEffect, useMemo, useState } from "react";
-import { filterByGenre } from "../../utils/filterByGenre";
+import { useEffect, useState } from "react";
 import { TableBooks } from "../TableBooks";
 
 const Books = () => {
-  const result = useQuery(ALL_BOOKS);
   const [chosenGenre, setChosenGenre] = useState(null);
-  const [filteredBooks, setFilteredBooks] = useState(null);
   const [genres, setGenres] = useState([])
   let books;
 
+  const result = useQuery(ALL_BOOKS, {
+    variables: {
+      genreToSearch: chosenGenre,
+    },
+  })
+
   useEffect(() => {
-    if(books) {
+    if(books && genres.length === 0) {
       let allGenres = new Set();
 
       books.forEach((book) => {
@@ -25,10 +28,6 @@ const Books = () => {
     }
   }, [result.data])
 
-  useMemo(() => {
-    filterByGenre(result, chosenGenre, setFilteredBooks)
-  }, [chosenGenre, result.data]);
-
   if (result.loading) {
     return <div>loading...</div>;
   }
@@ -37,8 +36,8 @@ const Books = () => {
     return <div>error</div>;
   }
 
-  books = filteredBooks || result.data.allBooks;
-  
+  books = result.data.allBooks;
+  console.log(books)
   return (
     <div>
       <h2>books</h2>

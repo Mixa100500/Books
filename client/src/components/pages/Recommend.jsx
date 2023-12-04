@@ -1,21 +1,23 @@
 import { useQuery } from '@apollo/client';
 import React, { useEffect, useState } from 'react'
-import { ALL_BOOKS, ME } from '../../queries';
-import { filterByGenre } from '../../utils/filterByGenre';
-import { TableBooks } from '../TableBooks';
+import { ALL_BOOKS, ME } from '../../queries'
+import { TableBooks } from '../TableBooks'
 
 const Recommend = (props) => {
-  const queryBooks = useQuery(ALL_BOOKS)
   const queryMe = useQuery(ME)
   const [favoriteGenre, setFavoriteGenre] = useState(null)
-  const [filteredBooks, setFilteredBooks] = useState([])
+
+  const queryBooks = useQuery(ALL_BOOKS, {
+    variables: {
+      genreToSearch: favoriteGenre,
+    },
+  })
 
   useEffect(() => {
     
     if(!favoriteGenre && queryMe.data) {
       const genre = queryMe.data.me.favoriteGenre
       setFavoriteGenre(genre)
-      filterByGenre(queryBooks, genre, setFilteredBooks)
     }
   }, [queryBooks.data])
 
@@ -27,8 +29,9 @@ const Recommend = (props) => {
     return <div>error</div>;
   }
   const genre = queryMe.data.me.favoriteGenre
-
-  if (filteredBooks.length === 0) {
+  const allBooks = queryBooks.data.allBooks
+  
+  if (allBooks.length === 0) {
     return <div>No books in your favorite <strong>genre</strong></div>
   }
 
@@ -36,7 +39,7 @@ const Recommend = (props) => {
     <div>
       <h2>recommendations</h2>
       <div>books your favorite genre <strong>{genre}</strong></div>
-      <TableBooks books={filteredBooks} />
+      <TableBooks books={allBooks} />
     </div>
   )
 }
